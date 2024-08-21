@@ -10,13 +10,13 @@
 
 .page{
   width: 90%;
-  height: 90%;
+  height: 70%;
   border-radius: 10px;
   background-color: white;
 }
 
 .content {
-  margin: 10px;
+  margin: 5px;
   height: 70%;
   border-radius: 10px;
   background-color: aqua;
