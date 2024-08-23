@@ -5,19 +5,5 @@
   text-align: center;
   align-items: center;
   justify-content: center;
-  background-color: grey;
-}
-
-.page{
-  width: 90%;
-  height: 70%;
-  border-radius: 10px;
-  background-color: white;
-}
-
-.content {
-  margin: 5px;
-  height: 70%;
-  border-radius: 10px;
-  background-color: aqua;
+  background: no-repeat url("./assets/bg-gradient.png");
 }
