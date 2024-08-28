@@ -21,12 +21,11 @@ const initializeSnake = (length: number) => {
 
 const App: React.FC = () => {
   const [snake, setSnake] = useState(initializeSnake(1));
-  const [playerTwoSnake, setPlayerTwoSnake] = useState(initializeSnake(1));
+  const [aiSnake, setAiSnake] = useState(initializeSnake(1));
   const [food, setFood] = useState(getRandomPosition());
   const [direction, setDirection] = useState<Direction>("RIGHT");
-  const [playerTwoDirection, setPlayerTwoDirection] = useState<Direction>("LEFT");
+  const [aiDirection, setAiDirection] = useState<Direction>("LEFT");
   const [nextDirection, setNextDirection] = useState<Direction | null>(null);
-  const [nextPlayerTwoDirection, setNextPlayerTwoDirection] = useState<Direction | null>(null);
   const [speed, setSpeed] = useState(200);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
@@ -34,8 +33,8 @@ const App: React.FC = () => {
 
   const snakeRef = useRef(snake);
   const directionRef = useRef(direction);
-  const playerTwoSnakeRef = useRef(playerTwoSnake);
-  const playerTwoDirectionRef = useRef(playerTwoDirection);
+  const aiSnakeRef = useRef(aiSnake);
+  const aiDirectionRef = useRef(aiDirection);
 
   useEffect(() => {
     snakeRef.current = snake;
@@ -46,19 +45,17 @@ const App: React.FC = () => {
   }, [direction]);
 
   useEffect(() => {
-    playerTwoSnakeRef.current = playerTwoSnake;
-  }, [playerTwoSnake]);
+    aiSnakeRef.current = aiSnake;
+  }, [aiSnake]);
 
   useEffect(() => {
-    playerTwoDirectionRef.current = playerTwoDirection;
-  }, [playerTwoDirection]);
+    aiDirectionRef.current = aiDirection;
+  }, [aiDirection]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       let newDirection: Direction | null = null;
-      let newPlayerTwoDirection: Direction | null = null;
 
-      // Player 1 controls (Arrow Keys)
       switch (e.key) {
         case "ArrowUp":
           if (directionRef.current !== "DOWN") newDirection = "UP";
@@ -74,28 +71,8 @@ const App: React.FC = () => {
           break;
       }
 
-      // Player 2 controls (WASD)
-      switch (e.key) {
-        case "w":
-          if (playerTwoDirectionRef.current !== "DOWN") newPlayerTwoDirection = "UP";
-          break;
-        case "s":
-          if (playerTwoDirectionRef.current !== "UP") newPlayerTwoDirection = "DOWN";
-          break;
-        case "a":
-          if (playerTwoDirectionRef.current !== "RIGHT") newPlayerTwoDirection = "LEFT";
-          break;
-        case "d":
-          if (playerTwoDirectionRef.current !== "LEFT") newPlayerTwoDirection = "RIGHT";
-          break;
-      }
-
       if (newDirection && newDirection !== directionRef.current) {
         setNextDirection(newDirection);
-      }
-
-      if (newPlayerTwoDirection && newPlayerTwoDirection !== playerTwoDirectionRef.current) {
-        setNextPlayerTwoDirection(newPlayerTwoDirection);
       }
     };
 
@@ -110,13 +87,12 @@ const App: React.FC = () => {
 
     const interval = setInterval(() => {
       moveSnake(nextDirection || directionRef.current);
-      movePlayerTwoSnake(nextPlayerTwoDirection || playerTwoDirectionRef.current);
+      moveAiSnake();
       setNextDirection(null);
-      setNextPlayerTwoDirection(null);
     }, speed);
 
     return () => clearInterval(interval);
-  }, [gameOver, speed, nextDirection, nextPlayerTwoDirection]);
+  }, [gameOver, speed, nextDirection]);
 
   const moveSnake = (currentDirection: Direction) => {
     const newSnake = [...snakeRef.current];
@@ -171,72 +147,91 @@ const App: React.FC = () => {
     setDirection(currentDirection);
   };
 
-  const movePlayerTwoSnake = (currentDirection: Direction) => {
-    const newSnake = [...playerTwoSnakeRef.current];
-    const head = newSnake[0];
+  const moveAiSnake = () => {
+    const aiSnake = aiSnakeRef.current;
+    const aiHead = aiSnake[0];
 
-    let newHead;
-    switch (currentDirection) {
-      case "UP":
-        newHead = { x: head.x, y: head.y - 1 };
-        break;
-      case "DOWN":
-        newHead = { x: head.x, y: head.y + 1 };
-        break;
-      case "LEFT":
-        newHead = { x: head.x - 1, y: head.y };
-        break;
-      case "RIGHT":
-        newHead = { x: head.x + 1, y: head.y };
-        break;
-      default:
-        newHead = head;
+    // Simples IA: move em direção à comida
+    let newAiDirection: Direction = aiDirectionRef.current;
+    const dx = food.x - aiHead.x;
+    const dy = food.y - aiHead.y;
+
+    const possibleDirections: Direction[] = ["UP", "DOWN", "LEFT", "RIGHT"].filter(dir => {
+      const testHead = getNewHead(aiHead, dir);
+      return !aiSnake.some(segment => segment.x === testHead.x && segment.y === testHead.y) &&
+             testHead.x >= 0 && testHead.x < GRID_WIDTH && testHead.y >= 0 && testHead.y < GRID_HEIGHT;
+    });
+
+    if (possibleDirections.length > 0) {
+      newAiDirection = possibleDirections.reduce((bestDirection, dir) => {
+        const testHead = getNewHead(aiHead, dir);
+        const distanceToFood = Math.abs(testHead.x - food.x) + Math.abs(testHead.y - food.y);
+        const bestDistance = Math.abs(getNewHead(aiHead, bestDirection).x - food.x) + Math.abs(getNewHead(aiHead, bestDirection).y - food.y);
+        return distanceToFood < bestDistance ? dir : bestDirection;
+      }, possibleDirections[0]);
     }
+
+    const newAiSnake = [...aiSnake];
+    const newAiHead = getNewHead(aiHead, newAiDirection);
 
     // Verifica colisão com paredes
     if (
-      newHead.x < 0 ||
-      newHead.x >= GRID_WIDTH ||
-      newHead.y < 0 ||
-      newHead.y >= GRID_HEIGHT
+      newAiHead.x < 0 ||
+      newAiHead.x >= GRID_WIDTH ||
+      newAiHead.y < 0 ||
+      newAiHead.y >= GRID_HEIGHT
     ) {
       setGameOver(true);
       return;
     }
 
     // Verifica colisão com o próprio corpo
-    if (newSnake.some((segment) => segment.x === newHead.x && segment.y === newHead.y)) {
+    if (newAiSnake.some((segment) => segment.x === newAiHead.x && segment.y === newAiHead.y)) {
       setGameOver(true);
       return;
     }
 
-    newSnake.unshift(newHead);
+    newAiSnake.unshift(newAiHead);
 
-    // Verifica se a cobra comeu o alimento
-    if (newHead.x === food.x && newHead.y === food.y) {
+    // Verifica se a cobra IA comeu o alimento
+    if (newAiHead.x === food.x && newAiHead.y === food.y) {
       setFood(getRandomPosition()); // Move a maçã para uma nova posição aleatória
     } else {
-      newSnake.pop();
+      newAiSnake.pop();
     }
 
     // Verifica colisão entre as cobras
-    if (newSnake.some(segment => snakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
+    if (newAiSnake.some(segment => snakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
       setGameOver(true);
       return;
     }
 
-    setPlayerTwoSnake(newSnake);
-    setPlayerTwoDirection(currentDirection);
+    setAiSnake(newAiSnake);
+    setAiDirection(newAiDirection);
+  };
+
+  const getNewHead = (head: { x: number, y: number }, direction: Direction) => {
+    switch (direction) {
+      case "UP":
+        return { x: head.x, y: head.y - 1 };
+      case "DOWN":
+        return { x: head.x, y: head.y + 1 };
+      case "LEFT":
+        return { x: head.x - 1, y: head.y };
+      case "RIGHT":
+        return { x: head.x + 1, y: head.y };
+      default:
+        return head;
+    }
   };
 
   const restartGame = () => {
     setSnake(initializeSnake(1));
-    setPlayerTwoSnake(initializeSnake(1));
+    setAiSnake(initializeSnake(1));
     setFood(getRandomPosition());
     setDirection("RIGHT");
-    setPlayerTwoDirection("LEFT");
+    setAiDirection("LEFT");
     setNextDirection(null);
-    setNextPlayerTwoDirection(null);
     setSpeed(200);
     setGameOver(false);
     setScoreHistory(history => [score, ...history].slice(0, 10)); // Adiciona o score ao histórico e limita a 10 itens
@@ -271,12 +266,12 @@ const App: React.FC = () => {
             const x = index % GRID_WIDTH;
             const y = Math.floor(index / GRID_WIDTH);
             const isSnake = snake.some(segment => segment.x === x && segment.y === y);
-            const isPlayerTwoSnake = playerTwoSnake.some(segment => segment.x === x && segment.y === y);
+            const isAiSnake = aiSnake.some(segment => segment.x === x && segment.y === y);
             const isFood = food.x === x && food.y === y;
             return (
               <div
                 key={index}
-                className={`w-full h-full ${isSnake ? "bg-green-500" : isPlayerTwoSnake ? "bg-red-500" : "bg-gray-900"}`}
+                className={`w-full h-full ${isSnake ? "bg-green-500" : isAiSnake ? "bg-red-500" : "bg-gray-900"}`}
                 style={{
                   backgroundImage: isFood ? `url(${foodImage})` : undefined,
                   backgroundSize: "cover", // Para garantir que a imagem preencha todo o espaço
