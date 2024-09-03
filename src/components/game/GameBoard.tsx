@@ -17,9 +17,14 @@ const initializeSnake = (length: number) => {
     x: position.x - i,
     y: position.y
   }));
-}; 
+};
 
-export function GameBoard() {
+interface propsGameBoard {
+  startGame: boolean,
+  stopGame: (text:string) => void
+}
+
+export function GameBoard(props: propsGameBoard) {
   const [snake, setSnake] = useState(initializeSnake(1));
   const [aiSnake, setAiSnake] = useState(initializeSnake(1));
   const [food, setFood] = useState(getRandomPosition());
@@ -27,14 +32,20 @@ export function GameBoard() {
   const [aiDirection, setAiDirection] = useState<Direction>("LEFT");
   const [nextDirection, setNextDirection] = useState<Direction | null>(null);
   const [speed, setSpeed] = useState(200);
-  const [gameOver, setGameOver] = useState(false);
+  const [gameOver, setGameOver] = useState(true);
   const [score, setScore] = useState(0);
   const [scoreHistory, setScoreHistory] = useState<number[]>([]); // Histórico de pontos
-
+  
   const snakeRef = useRef(snake);
   const directionRef = useRef(direction);
   const aiSnakeRef = useRef(aiSnake);
   const aiDirectionRef = useRef(aiDirection);
+
+  useEffect(() => {
+    if (props.startGame == true) {
+      setGameOver(false)
+    }
+  },[props.startGame])
 
   useEffect(() => {
     snakeRef.current = snake;
@@ -189,6 +200,14 @@ export function GameBoard() {
       newSnake.pop();
     }
 
+    // Verifica colisão entre as cobras
+    if (newSnake.some(segment => aiSnakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
+      setGameOver(true);
+      restartGame()
+      props.stopGame('Você perdeu o jogo!')
+      return;
+    }
+
     setSnake(newSnake);
     setDirection(currentDirection);
   };
@@ -247,6 +266,8 @@ export function GameBoard() {
     // Verifica colisão entre as cobras
     if (newAiSnake.some(segment => snakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
       setGameOver(true);
+      restartGame()
+      props.stopGame('Você ganhou o jogo!')
       return;
     }
 
@@ -277,9 +298,6 @@ export function GameBoard() {
     setAiDirection("LEFT");
     setNextDirection(null);
     setSpeed(200);
-    setGameOver(false);
-    setScoreHistory(history => [score, ...history].slice(0, 10)); // Adiciona o score ao histórico e limita a 10 itens
-    setScore(0); // Reseta o placar
   };
   
   return (
