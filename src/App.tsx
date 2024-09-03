@@ -1,21 +1,31 @@
-import './App.css'
+import React, { useState, useEffect, useRef } from "react";
+import { GameBoard } from "./game/GameBoard";
 
-function App() {
+const App: React.FC = () => {
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+  const [scoreHistory, setScoreHistory] = useState<number[]>([]); // Histórico de pontos
+
+  
 
   return (
-    <div className='flex flex-col h-full w-11/12 items-center justify-center'>
-      <div className='flex flex-row items-start'>
-        <p className='text-white'>Sssnake</p>
-        <p className='text-white'>jogar/tutorial/créditos</p>
-      </div>
-      <div className="text-3xl font-bold w-11/12 h-4/5 bg-emerald-400">
-        Sssnake. Aumente agora a sua cobrinha!
-      </div>
-      <div className='teste'>
-
+    <div className="flex w-screen h-screen overflow-hidden bg-gray-800">
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <GameBoard />
+        {gameOver && (
+          <div className="mt-8">
+            <div className="text-red-500 text-xl">Fim De Jogo</div>
+            <button
+              onClick={() => console.log('RESTART')}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Restart
+            </button>
+          </div>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
