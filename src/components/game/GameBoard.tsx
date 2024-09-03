@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import foodImage from '../assets/food.png';
+import foodImage from '../../assets/food.png';
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 

@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'gradient': "url('./assets/bg-gradient.png')",
+        'title': "url('./assets/SSSNAKE.png')",
+      },
       backgroundColor: {
         "blue-back": "#21D1DF"
       },
