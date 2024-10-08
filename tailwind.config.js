@@ -15,6 +15,9 @@ export default {
       },
       borderColor: {
         "blue-bd": "#47DAE7",
+      },
+      fontFamily: {
+        'jura': ['Jura', 'sans-serif'], // sans-serif fonte secundaria caso navegador nao carregue Jura
       }
     },
   },

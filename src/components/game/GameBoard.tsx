@@ -386,8 +386,10 @@ export function GameBoard(props: propsGameBoard) {
               })}
           </div>
       </div>
-      <section className='bg-[#003C44] border-[6px] border-gray-200 rounded-md text-[#00F418] text-center text-2xl mt-6'>
-        {score} Pontos
+      <section className='bg-[#003C44] border-[6px] border-gray-200 rounded-md text-[#00F418] text-center font-jura text-5xl mt-6 p-6'>
+        <span className='bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent'>
+          {score} Pontos
+        </span>
       </section>
     </div>
   )
