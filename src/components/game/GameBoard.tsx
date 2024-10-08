@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import foodImage from '../../assets/food.png';
+import bombImage from '../../assets/bomb.png';
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
@@ -19,6 +20,16 @@ const initializeSnake = (length: number) => {
   }));
 };
 
+const initObstaculos = () => {
+  const randomValue = Math.random() * (10 - 1) + 1;
+  let listPositions = []
+  for (let index = 0; index < randomValue; index++) {
+    listPositions.push(getRandomPosition())
+  }
+
+  return listPositions;
+}
+
 interface propsGameBoard {
   startGame: boolean,
   stopGame: (text:string) => void
@@ -28,6 +39,7 @@ export function GameBoard(props: propsGameBoard) {
   const [snake, setSnake] = useState(initializeSnake(1));
   const [aiSnake, setAiSnake] = useState(initializeSnake(1));
   const [food, setFood] = useState(getRandomPosition());
+  const [obstaculos, setObstaculos] = useState(initObstaculos())
   const [direction, setDirection] = useState<Direction>("RIGHT");
   const [aiDirection, setAiDirection] = useState<Direction>("LEFT");
   const [nextDirection, setNextDirection] = useState<Direction | null>(null);
@@ -70,6 +82,7 @@ export function GameBoard(props: propsGameBoard) {
       let newDirection: Direction | null = null;
 
       switch (e.key) {
+        // Andar com as Setas
         case "ArrowUp":
           if (directionRef.current !== "DOWN") newDirection = "UP";
           break;
@@ -80,6 +93,20 @@ export function GameBoard(props: propsGameBoard) {
           if (directionRef.current !== "RIGHT") newDirection = "LEFT";
           break;
         case "ArrowRight":
+          if (directionRef.current !== "LEFT") newDirection = "RIGHT";
+          break;
+        
+        // Andar com WASD
+        case "w":
+          if (directionRef.current !== "DOWN") newDirection = "UP";
+          break;
+        case "s":
+          if (directionRef.current !== "UP") newDirection = "DOWN";
+          break;
+        case "a":
+          if (directionRef.current !== "RIGHT") newDirection = "LEFT";
+          break;
+        case "d":
           if (directionRef.current !== "LEFT") newDirection = "RIGHT";
           break;
       }
@@ -182,7 +209,7 @@ export function GameBoard(props: propsGameBoard) {
     ) {
       setGameOver(true);
       restartGame()
-      props.stopGame('Você perdey o jogo!')
+      props.stopGame('Você perdeu o jogo!')
       return;
     }
 
@@ -196,20 +223,34 @@ export function GameBoard(props: propsGameBoard) {
 
     newSnake.unshift(newHead);
 
-    // Verifica se a cobra comeu o alimento
-    if (newHead.x === food.x && newHead.y === food.y) {
-      setFood(getRandomPosition()); // Move a maçã para uma nova posição aleatória
-      setScore(score => score + 1000); // Incrementa o placar
-    } else {
-      newSnake.pop();
-    }
-
     // Verifica colisão entre as cobras
     if (newSnake.some(segment => aiSnakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
       setGameOver(true);
       restartGame()
       props.stopGame('Você perdeu o jogo!')
       return;
+    }
+
+    // Verifica colisão com os obstaculos
+    if (obstaculos.some(segment => (segment.x === newHead.x && segment.y === newHead.y))) {
+      if ((score - 1000) < 0) {
+        setGameOver(true);
+        restartGame()
+        props.stopGame('Você perdeu o jogo!')
+        return;
+      } else {
+        setScore(score - 1000)
+        newSnake.pop();
+        setObstaculos(initObstaculos())
+      }
+    }
+
+    // Verifica se a cobra comeu o alimento
+    if (newHead.x === food.x && newHead.y === food.y) {
+      setFood(getRandomPosition()); // Move a maçã para uma nova posição aleatória
+      setScore(score => score + 1000); // Incrementa o placar
+    } else {
+      newSnake.pop();
     }
 
     setSnake(newSnake);
@@ -269,9 +310,10 @@ export function GameBoard(props: propsGameBoard) {
 
     // Verifica colisão entre as cobras
     if (newAiSnake.some(segment => snakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
-      setGameOver(true);
-      restartGame()
-      props.stopGame('Você ganhou o jogo!')
+      //setGameOver(true);
+      //restartGame()
+      //props.stopGame('Você ganhou o jogo!')
+      setAiSnake(initializeSnake(1))
       return;
     }
 
@@ -324,16 +366,19 @@ export function GameBoard(props: propsGameBoard) {
                 const y = Math.floor(index / GRID_WIDTH);
                 const isSnake = snake.some(segment => segment.x === x && segment.y === y);
                 const isAiSnake = aiSnake.some(segment => segment.x === x && segment.y === y);
+                const isObstaculos = obstaculos.some(segment => segment.x === x && segment.y === y);
                 const isFood = food.x === x && food.y === y;
                 return (
                   <div
                     key={index}
                     className={`w-full h-full ${
                       isSnake ? "bg-[#F25227]" : 
-                      isAiSnake ? "bg-[#966CFD]" : 
+                      isAiSnake ? "bg-[#966CFD]" :
+                      isObstaculos ? "animate-bounce" :
+                      isFood ? "animate-bounce" :
                       "border-[0.8px] border-blue-bd rounded-md"}`}
                     style={{
-                      backgroundImage: isFood ? `url(${foodImage})` : undefined,
+                      backgroundImage: isFood ? `url(${foodImage})` : isObstaculos ? `url(${bombImage})` : undefined ,
                       backgroundSize: "cover", // Para garantir que a imagem preencha todo o espaço
                     }}
                   ></div>
