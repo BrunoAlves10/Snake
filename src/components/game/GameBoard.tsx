@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import foodImage from '../../assets/food.png';
+import bombImage from '../../assets/bomb.png';
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
@@ -19,6 +20,16 @@ const initializeSnake = (length: number) => {
   }));
 };
 
+const initObstaculos = () => {
+  const randomValue = Math.random() * (10 - 1) + 1;
+  let listPositions = []
+  for (let index = 0; index < randomValue; index++) {
+    listPositions.push(getRandomPosition())
+  }
+
+  return listPositions;
+}
+
 interface propsGameBoard {
   startGame: boolean,
   stopGame: (text:string) => void
@@ -28,10 +39,11 @@ export function GameBoard(props: propsGameBoard) {
   const [snake, setSnake] = useState(initializeSnake(1));
   const [aiSnake, setAiSnake] = useState(initializeSnake(1));
   const [food, setFood] = useState(getRandomPosition());
+  const [obstaculos, setObstaculos] = useState(initObstaculos())
   const [direction, setDirection] = useState<Direction>("RIGHT");
   const [aiDirection, setAiDirection] = useState<Direction>("LEFT");
   const [nextDirection, setNextDirection] = useState<Direction | null>(null);
-  const [speed, setSpeed] = useState(200);
+  const [speed, setSpeed] = useState(160);
   const [gameOver, setGameOver] = useState(true);
   const [score, setScore] = useState(0);
   const [scoreHistory, setScoreHistory] = useState<number[]>([]); // Histórico de pontos
@@ -70,6 +82,7 @@ export function GameBoard(props: propsGameBoard) {
       let newDirection: Direction | null = null;
 
       switch (e.key) {
+        // Andar com as Setas
         case "ArrowUp":
           if (directionRef.current !== "DOWN") newDirection = "UP";
           break;
@@ -80,6 +93,20 @@ export function GameBoard(props: propsGameBoard) {
           if (directionRef.current !== "RIGHT") newDirection = "LEFT";
           break;
         case "ArrowRight":
+          if (directionRef.current !== "LEFT") newDirection = "RIGHT";
+          break;
+        
+        // Andar com WASD
+        case "w":
+          if (directionRef.current !== "DOWN") newDirection = "UP";
+          break;
+        case "s":
+          if (directionRef.current !== "UP") newDirection = "DOWN";
+          break;
+        case "a":
+          if (directionRef.current !== "RIGHT") newDirection = "LEFT";
+          break;
+        case "d":
           if (directionRef.current !== "LEFT") newDirection = "RIGHT";
           break;
       }
@@ -128,77 +155,73 @@ export function GameBoard(props: propsGameBoard) {
       default:
         newHead = head;
     }
-
-    // Verifica colisão com paredes
-    // if (
-    //   newHead.x < 0 ||
-    //   newHead.x >= GRID_WIDTH ||
-    //   newHead.y < 0 ||
-    //   newHead.y >= GRID_HEIGHT
-    // ) {
-    //   setGameOver(true);
+// Esse codigo faz com que a snake possa teletransportar nas bordas do mapa
+    // if (newHead.y >= (GRID_HEIGHT + 1)) {
+    //   if (snake.length > 1) {
+    //     let listSnake = snake;
+    //     listSnake.shift()
+    //     setSnake([{x: snake[0].x, y: 0},...listSnake])        
+    //   } else {
+    //     setSnake([{x: snake[0].x, y: 0}])
+    //   }
     //   return;
     // }
 
-    if (newHead.y >= GRID_HEIGHT) {
-      if (snake.length > 1) {
-        let listSnake = snake;
-        listSnake.shift()
-        setSnake([{x: snake[0].x, y: 0},...listSnake])        
-      } else {
-        setSnake([{x: snake[0].x, y: 0}])
-      }
-      return;
-    }
-
-    if (newHead.y <= 0) {
-      if (snake.length > 1) {
-        let listSnake = snake;
-        listSnake.shift()
-        setSnake([{x: snake[0].x, y: GRID_HEIGHT},...listSnake])        
-      } else {
-        setSnake([{x: snake[0].x, y: GRID_HEIGHT}])
-      }
-      return;
-    }
+    // if (newHead.y <= -1) {
+    //   if (snake.length > 1) {
+    //     let listSnake = snake;
+    //     listSnake.shift()
+    //     setSnake([{x: snake[0].x, y: GRID_HEIGHT},...listSnake])        
+    //   } else {
+    //     setSnake([{x: snake[0].x, y: GRID_HEIGHT}])
+    //   }
+    //   return;
+    // }
     
-    if (newHead.x >= GRID_WIDTH) {
-      if (snake.length > 1) {
-        let listSnake = snake;
-        listSnake.shift()
-        setSnake([{x: 0, y: snake[0].y},...listSnake])        
-      } else {
-        setSnake([{x: 0, y: snake[0].y}])
-      }
-      return;
-    }
+    // if (newHead.x >= (GRID_WIDTH + 1)) {
+    //   if (snake.length > 1) {
+    //     let listSnake = snake;
+    //     listSnake.shift()
+    //     setSnake([{x: 0, y: snake[0].y},...listSnake])        
+    //   } else {
+    //     setSnake([{x: 0, y: snake[0].y}])
+    //   }
+    //   return;
+    // }
 
-    if (newHead.x <= 0) {
-      if (snake.length > 1) {
-        let listSnake = snake;
-        listSnake.shift()
-        setSnake([{x: GRID_WIDTH, y: snake[0].y},...listSnake])        
-      } else {
-        setSnake([{x: GRID_WIDTH, y: snake[0].y}])
-      }
+    // if (newHead.x <= -1) {
+    //   if (snake.length > 1) {
+    //     let listSnake = snake;
+    //     listSnake.shift()
+    //     setSnake([{x: GRID_WIDTH, y: snake[0].y},...listSnake])        
+    //   } else {
+    //     setSnake([{x: GRID_WIDTH, y: snake[0].y}])
+    //   }
+    //   return;
+    // }
+
+    // Verifica colisão com paredes
+    if (
+      newHead.x < 0 ||
+      newHead.x >= GRID_WIDTH ||
+      newHead.y < 0 ||
+      newHead.y >= GRID_HEIGHT
+    ) {
+      setGameOver(true);
+      restartGame()
+      props.stopGame('Você perdeu o jogo!')
       return;
     }
 
     // Verifica colisão com o próprio corpo
     if (newSnake.some((segment) => segment.x === newHead.x && segment.y === newHead.y)) {
       setGameOver(true);
+      restartGame()
+      props.stopGame('Você perdeu o jogo!')
       return;
     }
 
     newSnake.unshift(newHead);
-
-    // Verifica se a cobra comeu o alimento
-    if (newHead.x === food.x && newHead.y === food.y) {
-      setFood(getRandomPosition()); // Move a maçã para uma nova posição aleatória
-      setScore(score => score + 1); // Incrementa o placar
-    } else {
-      newSnake.pop();
-    }
 
     // Verifica colisão entre as cobras
     if (newSnake.some(segment => aiSnakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
@@ -206,6 +229,28 @@ export function GameBoard(props: propsGameBoard) {
       restartGame()
       props.stopGame('Você perdeu o jogo!')
       return;
+    }
+
+    // Verifica colisão com os obstaculos
+    if (obstaculos.some(segment => (segment.x === newHead.x && segment.y === newHead.y))) {
+      if ((score - 1000) < 0) {
+        setGameOver(true);
+        restartGame()
+        props.stopGame('Você perdeu o jogo!')
+        return;
+      } else {
+        setScore(score - 1000)
+        newSnake.pop();
+        setObstaculos(initObstaculos())
+      }
+    }
+
+    // Verifica se a cobra comeu o alimento
+    if (newHead.x === food.x && newHead.y === food.y) {
+      setFood(getRandomPosition()); // Move a maçã para uma nova posição aleatória
+      setScore(score => score + 1000); // Incrementa o placar
+    } else {
+      newSnake.pop();
     }
 
     setSnake(newSnake);
@@ -265,9 +310,10 @@ export function GameBoard(props: propsGameBoard) {
 
     // Verifica colisão entre as cobras
     if (newAiSnake.some(segment => snakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
-      setGameOver(true);
-      restartGame()
-      props.stopGame('Você ganhou o jogo!')
+      //setGameOver(true);
+      //restartGame()
+      //props.stopGame('Você ganhou o jogo!')
+      setAiSnake(initializeSnake(1))
       return;
     }
 
@@ -297,42 +343,52 @@ export function GameBoard(props: propsGameBoard) {
     setDirection("RIGHT");
     setAiDirection("LEFT");
     setNextDirection(null);
+    setScore(0)
     setSpeed(200);
   };
   
   return (
-    <div className="bg-blue-back w-[800px] h-fit border-[12px] border-gray-300 rounded-2xl shadow-lg">
-          <div
-            className="grid"
-            style={{
-              gridTemplateColumns: `repeat(${GRID_WIDTH}, minmax(0, 1fr))`,
-              gridTemplateRows: `repeat(${GRID_HEIGHT}, minmax(0, 1fr))`,
-              width: "100%",
-              maxWidth: "800px",  // Ajusta a largura máxima para dar mais espaço horizontal
-              aspectRatio: `${GRID_WIDTH} / ${GRID_HEIGHT}`, // Mantém a proporção dos elementos
-            }}
-          >
-            {Array.from({ length: GRID_WIDTH * GRID_HEIGHT }).map((_, index) => {
-              const x = index % GRID_WIDTH;
-              const y = Math.floor(index / GRID_WIDTH);
-              const isSnake = snake.some(segment => segment.x === x && segment.y === y);
-              const isAiSnake = aiSnake.some(segment => segment.x === x && segment.y === y);
-              const isFood = food.x === x && food.y === y;
-              return (
-                <div
-                  key={index}
-                  className={`w-full h-full ${
-                    isSnake ? "bg-[#5620DB]" : 
-                    isAiSnake ? "bg-[#F25227]" : 
-                    "rounded-md border-[0.5px] border-blue-bd"}`}
-                  style={{
-                    backgroundImage: isFood ? `url(${foodImage})` : undefined,
-                    backgroundSize: "cover", // Para garantir que a imagem preencha todo o espaço
-                  }}
-                ></div>
-              );
-            })}
+    <div>
+      <div className="bg-blue-back w-[800px] h-fit border-[12px] border-gray-300 rounded-2xl shadow-lg">
+            <div
+              className="grid"
+              style={{
+                gridTemplateColumns: `repeat(${GRID_WIDTH}, minmax(0, 1fr))`,
+                gridTemplateRows: `repeat(${GRID_HEIGHT}, minmax(0, 1fr))`,
+                width: "100%",
+                maxWidth: "800px",  // Ajusta a largura máxima para dar mais espaço horizontal
+                aspectRatio: `${GRID_WIDTH} / ${GRID_HEIGHT}`, // Mantém a proporção dos elementos
+                padding: 6
+              }}
+            >
+              {Array.from({ length: GRID_WIDTH * GRID_HEIGHT }).map((_, index) => {
+                const x = index % GRID_WIDTH;
+                const y = Math.floor(index / GRID_WIDTH);
+                const isSnake = snake.some(segment => segment.x === x && segment.y === y);
+                const isAiSnake = aiSnake.some(segment => segment.x === x && segment.y === y);
+                const isObstaculos = obstaculos.some(segment => segment.x === x && segment.y === y);
+                const isFood = food.x === x && food.y === y;
+                return (
+                  <div
+                    key={index}
+                    className={`w-full h-full ${
+                      isSnake ? "bg-[#F25227]" : 
+                      isAiSnake ? "bg-[#966CFD]" :
+                      isObstaculos ? "animate-bounce" :
+                      isFood ? "animate-bounce" :
+                      "border-[0.8px] border-blue-bd rounded-md"}`}
+                    style={{
+                      backgroundImage: isFood ? `url(${foodImage})` : isObstaculos ? `url(${bombImage})` : undefined ,
+                      backgroundSize: "cover", // Para garantir que a imagem preencha todo o espaço
+                    }}
+                  ></div>
+                );
+              })}
           </div>
-        </div>
+      </div>
+      <section className='bg-[#003C44] border-[6px] border-gray-200 rounded-md text-[#00F418] text-center text-2xl mt-6'>
+        {score} Pontos
+      </section>
+    </div>
   )
 }
