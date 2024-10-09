@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import foodImage from '../../assets/food.png';
 import bombImage from '../../assets/bomb.png';
+import { motion } from 'framer-motion';
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
@@ -47,7 +48,9 @@ export function GameBoard(props: propsGameBoard) {
   const [gameOver, setGameOver] = useState(true);
   const [score, setScore] = useState(0);
   const [scoreHistory, setScoreHistory] = useState<number[]>([]); // Histórico de pontos
-  
+  const [animatedScore, setAnimatedScore] = useState(0);
+
+
   const snakeRef = useRef(snake);
   const directionRef = useRef(direction);
   const aiSnakeRef = useRef(aiSnake);
@@ -121,6 +124,17 @@ export function GameBoard(props: propsGameBoard) {
       document.removeEventListener("keydown", handleKeyPress);
     };
   }, []);
+
+  /// teste animacao placar
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     if (gameOver) return;
@@ -368,6 +382,7 @@ export function GameBoard(props: propsGameBoard) {
                 const isAiSnake = aiSnake.some(segment => segment.x === x && segment.y === y);
                 const isObstaculos = obstaculos.some(segment => segment.x === x && segment.y === y);
                 const isFood = food.x === x && food.y === y;
+              
                 return (
                   <div
                     key={index}
@@ -387,9 +402,16 @@ export function GameBoard(props: propsGameBoard) {
           </div>
       </div>
       <section className='bg-[#003C44] border-[6px] border-gray-200 rounded-md text-[#00F418] text-center font-jura text-5xl mt-6 p-6'>
-        <span className='bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent'>
+        <motion.span
+          className='bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent'
+          key={score}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
+        >
           {score} Pontos
-        </span>
+        </motion.span>
       </section>
     </div>
   )
