@@ -384,7 +384,7 @@ export function GameBoard(props: propsGameBoard) {
                 const isFood = food.x === x && food.y === y;
               
                 return (
-                  <div
+                  <motion.div
                     key={index}
                     className={`w-full h-full ${
                       isSnake ? "bg-[#F25227]" : 
@@ -396,7 +396,11 @@ export function GameBoard(props: propsGameBoard) {
                       backgroundImage: isFood ? `url(${foodImage})` : isObstaculos ? `url(${bombImage})` : undefined ,
                       backgroundSize: "cover", // Para garantir que a imagem preencha todo o espaço
                     }}
-                  ></div>
+                    animate={{
+                      x: isSnake || isAiSnake ? [-0.5, 1, -0.5] : 0.5, // Desliza 10 pixels para a direita e volta
+                      transition: { duration: 1 }, 
+                    }}
+                  ></motion.div>
                 );
               })}
           </div>
