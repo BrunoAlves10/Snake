@@ -98,7 +98,7 @@ leaderboardRouter.post("/", async (req: Request, res: Response) => {
 
     if (result) {
       cResponse.status = "SUCCESS";
-      cResponse.message = `Successfully created a new message with id ${result.insertedId}`;
+      cResponse.message = `Successfully created a new highscore with id ${result.insertedId}`;
       cResponse.payload = result.insertedId;
 
       res.status(201).send(cResponse);
@@ -110,7 +110,7 @@ leaderboardRouter.post("/", async (req: Request, res: Response) => {
     }
   } catch (error) {
     cResponse.status = "ERROR";
-    cResponse.message = "Error when creating message";
+    cResponse.message = "Error when creating highscore";
     cResponse.payload = error;
 
     if (error instanceof Error) cResponse.payload = error.message;
@@ -132,11 +132,9 @@ leaderboardRouter.post("/highscore", async (req: Request, res: Response) => {
       .leaderboard!.find(query)
       .toArray()) as unknown as Highscore[];
 
-    console.log(highscore);
-
     if (highscore.length != 0) {
       cResponse.status = "ERROR";
-      cResponse.message = `Name already used in Leaderboard from MongoDB`;
+      cResponse.message = "Name already used in Leaderboard from MongoDB";
       cResponse.payload = highscore;
 
       res.status(409).send(cResponse);
@@ -148,7 +146,7 @@ leaderboardRouter.post("/highscore", async (req: Request, res: Response) => {
 
       if (result) {
         cResponse.status = "SUCCESS";
-        cResponse.message = `Successfully created a new message with id ${result.insertedId}`;
+        cResponse.message = `Successfully created a new highscore with id ${result.insertedId}`;
         cResponse.payload = result.insertedId;
 
         res.status(201).send(cResponse);
@@ -161,7 +159,7 @@ leaderboardRouter.post("/highscore", async (req: Request, res: Response) => {
     }
   } catch (error) {
     cResponse.status = "ERROR";
-    cResponse.message = "Error when creating message";
+    cResponse.message = "Error when creating highscore";
     cResponse.payload = error;
 
     if (error instanceof Error) cResponse.payload = error.message;
@@ -197,7 +195,7 @@ leaderboardRouter.put("/:id", async (req: Request, res: Response) => {
 
     if (result) {
       cResponse.status = "SUCCESS";
-      cResponse.message = `Successfully updated highscore with id ${result.upsertedId}`;
+      cResponse.message = `Successfully updated highscore with id ${id}`;
       cResponse.payload = updatedHighscore;
 
       res.status(201).send(cResponse);
@@ -229,27 +227,39 @@ leaderboardRouter.put(
     const name = req?.params?.name;
 
     try {
-      req.body.updatedAt = new Date();
-
-      const updatedHighscore: Highscore = req.body as Highscore;
-
       const query = { name: name };
 
-      const result = await collections.leaderboard!.updateOne(query, {
-        $set: updatedHighscore,
-      });
+      const highscore = (await collections
+        .leaderboard!.find(query)
+        .toArray()) as unknown as Highscore[];
 
-      if (result) {
-        cResponse.status = "SUCCESS";
-        cResponse.message = `Successfully updated highscore with id ${result.upsertedId}`;
-        cResponse.payload = updatedHighscore;
-
-        res.status(201).send(cResponse);
-      } else {
+      if (highscore[0].score >= req.body.score) {
         cResponse.status = "ERROR";
-        cResponse.message = `Highscore of user with name ${name} not updated`;
+        cResponse.message = `Highscore's score of user with name ${name} higher than new score`;
+        cResponse.payload = highscore;
 
-        res.status(304).send(cResponse);
+        res.status(300).send(cResponse);
+      } else {
+        req.body.updatedAt = new Date();
+
+        const updatedHighscore: Highscore = req.body as Highscore;
+
+        const result = await collections.leaderboard!.updateOne(query, {
+          $set: updatedHighscore,
+        });
+
+        if (result) {
+          cResponse.status = "SUCCESS";
+          cResponse.message = `Successfully updated highscore with id ${highscore[0]._id!}`;
+          cResponse.payload = highscore[0]._id!;
+
+          res.status(201).send(cResponse);
+        } else {
+          cResponse.status = "ERROR";
+          cResponse.message = `Highscore of user with name ${name} not updated`;
+
+          res.status(304).send(cResponse);
+        }
       }
     } catch (error) {
       cResponse.status = "ERROR";

@@ -2,29 +2,22 @@
   "name": "snake",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "concurrently \"npm run dev\" \"npm run server:start\"",
+    "start": "concurrently \"npm run dev\" \"cd ./server && npm run server:start\"",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "server:build": "tsc -p server/tsconfig.server.json",
-    "server:start": "npx tsc -p server/tsconfig.server.json && node server/dist/index.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "concurrently": "^9.0.1",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
     "framer-motion": "^11.11.4",
-    "mongodb": "^6.10.0",
-    "net": "^1.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.8.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
@@ -33,7 +26,6 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "tailwindcss": "^3.4.10",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
