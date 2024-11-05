@@ -1,0 +1,23 @@
+services:
+  peerjs:
+    image: peerjs/peerjs-server:latest
+    container_name: peerjs-server
+    ports:
+      - "9000:9000"
+    environment:
+      - PEERJS_PORT=9000
+      - PEERJS_PATH=/myapp
+      - PEERJS_DEBUG=true
+      - PEERJS_REDIS=redis://redis:6379
+      - PEERJS_HOST=0.0.0.0
+      - PEERJS_SECURE=false  # Set to 'true' for secure (https) connections, requires SSL certs
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    expose:
+      - "6379"  # expose port 6379 to the peerjs server
+
