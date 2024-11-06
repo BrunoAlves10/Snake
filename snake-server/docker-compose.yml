@@ -1,9 +1,16 @@
 services:
+  snake-api:
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+
   peerjs:
     image: peerjs/peerjs-server:latest
     container_name: peerjs-server
     ports:
-      - "9000:9000"
+      - 9000:9000
     environment:
       - PEERJS_PORT=9000
       - PEERJS_PATH=/myapp
@@ -12,9 +19,9 @@ services:
       - PEERJS_HOST=0.0.0.0
       - PEERJS_SECURE=false  # Set to 'true' for secure (https) connections, requires SSL certs
     depends_on:
-      - redis
+      - peerjs-redis
 
-  redis:
+  peerjs-redis:
     image: redis:alpine
     container_name: redis
     restart: always
