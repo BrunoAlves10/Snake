@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import foodImage from '../../assets/food.png';
 import bombImage from '../../assets/bomb.png';
-import { motion } from 'framer-motion';
+import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
@@ -64,7 +64,7 @@ export function GameBoard(props: propsGameBoard) {
 
   useEffect(() => {
     snakeRef.current = snake;
-    
+    setScore(score + 1)
   }, [snake]);
 
   useEffect(() => {
@@ -125,17 +125,6 @@ export function GameBoard(props: propsGameBoard) {
     };
   }, []);
 
-  /// teste animacao placar
-
-
-
-
-
-
-
-
-
-
   useEffect(() => {
     if (gameOver) return;
 
@@ -169,50 +158,6 @@ export function GameBoard(props: propsGameBoard) {
       default:
         newHead = head;
     }
-// Esse codigo faz com que a snake possa teletransportar nas bordas do mapa
-    // if (newHead.y >= (GRID_HEIGHT + 1)) {
-    //   if (snake.length > 1) {
-    //     let listSnake = snake;
-    //     listSnake.shift()
-    //     setSnake([{x: snake[0].x, y: 0},...listSnake])        
-    //   } else {
-    //     setSnake([{x: snake[0].x, y: 0}])
-    //   }
-    //   return;
-    // }
-
-    // if (newHead.y <= -1) {
-    //   if (snake.length > 1) {
-    //     let listSnake = snake;
-    //     listSnake.shift()
-    //     setSnake([{x: snake[0].x, y: GRID_HEIGHT},...listSnake])        
-    //   } else {
-    //     setSnake([{x: snake[0].x, y: GRID_HEIGHT}])
-    //   }
-    //   return;
-    // }
-    
-    // if (newHead.x >= (GRID_WIDTH + 1)) {
-    //   if (snake.length > 1) {
-    //     let listSnake = snake;
-    //     listSnake.shift()
-    //     setSnake([{x: 0, y: snake[0].y},...listSnake])        
-    //   } else {
-    //     setSnake([{x: 0, y: snake[0].y}])
-    //   }
-    //   return;
-    // }
-
-    // if (newHead.x <= -1) {
-    //   if (snake.length > 1) {
-    //     let listSnake = snake;
-    //     listSnake.shift()
-    //     setSnake([{x: GRID_WIDTH, y: snake[0].y},...listSnake])        
-    //   } else {
-    //     setSnake([{x: GRID_WIDTH, y: snake[0].y}])
-    //   }
-    //   return;
-    // }
 
     // Verifica colisão com paredes
     if (
@@ -360,6 +305,15 @@ export function GameBoard(props: propsGameBoard) {
     setScore(0)
     setSpeed(200);
   };
+
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, Math.round);
+
+  useEffect(() => {
+    animate(count, score, {
+      duration: 2
+    });
+  }, [score]);
   
   return (
     <div>
@@ -401,17 +355,13 @@ export function GameBoard(props: propsGameBoard) {
               })}
           </div>
       </div>
-      <section className='bg-[#003C44] border-[6px] border-gray-200 rounded-md text-[#00F418] text-center font-jura text-5xl mt-6 p-6'>
-        <motion.span
+      <section className='grid grid-flow-col justify-center gap-4 bg-[#003C44] border-[6px] border-gray-200 rounded-md text-[#00F418] text-center font-jura text-5xl mt-6 p-6'>
+        <motion.h1
           className='bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent'
-          key={score}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
         >
-          {score} Pontos
-        </motion.span>
+          {rounded}
+        </motion.h1>
+        <h1>Pontos</h1>
       </section>
     </div>
   )
