@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import ModalStartGame from "./components/modal/modal.startgame";
 import { GameBoard } from "./components/game/GameBoard";
+import ScoreBoard from "./components/scoreboard/ScoreBoard";
 
 const App: React.FC = () => {
   const [startGame, setStartGame] = useState(false);
@@ -16,17 +17,20 @@ const App: React.FC = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="w-full h-10 flex items-start justify-between">
             <span className="bg-title bg-no-repeat w-full h-full">
-              
+              {/** LOGO SSSNAKE */}
             </span>
-            <span>
+            <span className="mr-28">
               config/config/config
             </span>
           </div>
-          <GameBoard startGame={startGame} stopGame={(text) => {
-            setStartGame(false)
-            setModalVisible(true)
-            setLabel(text)
-          }}/>
+          <div className="flex flex-row">
+            <GameBoard startGame={startGame} stopGame={(text) => {
+              setStartGame(false)
+              setModalVisible(true)
+              setLabel(text)
+            }}/>
+            <ScoreBoard/>
+          </div>
         </div>
       </div>
     </ModalStartGame>

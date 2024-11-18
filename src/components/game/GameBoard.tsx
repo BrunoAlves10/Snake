@@ -125,17 +125,6 @@ export function GameBoard(props: propsGameBoard) {
     };
   }, []);
 
-  /// teste animacao placar
-
-
-
-
-
-
-
-
-
-
   useEffect(() => {
     if (gameOver) return;
 
