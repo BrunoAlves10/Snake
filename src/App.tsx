@@ -5,20 +5,12 @@ import { NavBar } from "./components/nav/NavBar";
 import ScoreBoard from "./components/scoreboard/ScoreBoard";
 
 const App: React.FC = () => {
-  const [startGame, setStartGame] = useState(false);
-  const [modalVisible, setModalVisible] = useState(true)
-  const [label, setLabel] = useState<string | null>(null)
-  
   return (
       <div className="bg-gradient flex items-center justify-center w-screen h-screen overflow-hidden">
         <div className="flex flex-col items-center justify-center">
           <NavBar/>
           <div className="flex flex-row">
-            <GameBoard startGame={startGame} stopGame={(text) => {
-              setStartGame(false)
-              setModalVisible(true)
-              setLabel(text)
-            }}/>
+            <GameBoard/>
             <ScoreBoard/>
           </div>
         </div>

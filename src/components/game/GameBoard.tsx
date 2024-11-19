@@ -31,12 +31,7 @@ const initObstaculos = () => {
   return listPositions;
 }
 
-interface propsGameBoard {
-  startGame: boolean,
-  stopGame: (text:string) => void
-}
-
-export function GameBoard(props: propsGameBoard) {
+export function GameBoard() {
   const [snake, setSnake] = useState(initializeSnake(1));
   const [aiSnake, setAiSnake] = useState(initializeSnake(1));
   const [food, setFood] = useState(getRandomPosition());
@@ -47,8 +42,7 @@ export function GameBoard(props: propsGameBoard) {
   const [speed, setSpeed] = useState(160);
   const [gameOver, setGameOver] = useState(true);
   const [score, setScore] = useState(0);
-  const [scoreHistory, setScoreHistory] = useState<number[]>([]); // Histórico de pontos
-  const [animatedScore, setAnimatedScore] = useState(0);
+  const [firstTime, setFirstTime] = useState(true);
 
 
   const snakeRef = useRef(snake);
@@ -297,6 +291,7 @@ export function GameBoard(props: propsGameBoard) {
     setScore(0)
     setSpeed(200);
     setGameOver(false)
+    setFirstTime(false)
   };
 
   const count = useMotionValue(0);
@@ -310,16 +305,20 @@ export function GameBoard(props: propsGameBoard) {
   
   return (
     <div>
-      <div className="bg-blue-back w-[800px] h-fit border-[12px] border-gray-300 rounded-2xl shadow-lg relative">
+      <div className="bg-blue-back w-[800px] h-fit border-[8px] border-gray-300 rounded-2xl shadow-lg relative">
         {
           gameOver
           ? (
-            <div className='z-50 bg-opacity-40 bg-black flex flex-col justify-center items-center p-10 absolute right-0 left-0 top-0 bottom-0'>
-              <h1 className='font-bold text-2xl text-white'>Você perdeu o jogo!</h1>
+            <div className='z-50 bg-opacity-40 bg-black flex flex-col justify-center items-center p-10 absolute right-0 left-0 top-0 bottom-0 rounded-[8px]'>
+              <h1 className='font-bold text-2xl text-white'>
+                {
+                  firstTime ? "Bem-vindo ao SSSNAKE" : "Você perdeu o jogo!"
+                }
+              </h1>
               <button
                 className="bg-yellow-300 px-8 py-2 rounded-md font-semibold mt-6"
                 onClick={restartGame}
-              >Jogar novamente</button>
+              >{firstTime ? "Começar a jogar" : "Jogar novamente"}</button>
             </div>
           ) : null
         }
@@ -361,7 +360,7 @@ export function GameBoard(props: propsGameBoard) {
           </div>
             
       </div>
-      <section className='grid grid-flow-col justify-center gap-4 bg-[#003C44] border-[6px] border-gray-200 rounded-md text-[#00F418] text-center font-jura text-5xl mt-6 p-6'>
+      <section className='grid grid-flow-col justify-center gap-4 bg-[#003C44] border-[4px] border-gray-300 rounded-xl text-[#00F418] text-center font-jura text-5xl mt-6 p-6'>
         <motion.h1
           className='bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent'
         >

@@ -23,7 +23,7 @@ export default function ScoreBoard() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center p-2 w-80 bg-[#003C44] border-4 border-gray-200 rounded-[15px] text-white shadow-lg ml-8 py-4">
+    <div className="flex flex-col items-center p-2 w-80 bg-[#003C44] border-4 border-gray-300 rounded-[15px] text-white shadow-lg ml-8 py-4">
       <motion.span
         className="bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent text-3xl font-bold mb-5"
         initial={{ opacity: 0, y: -20 }}
