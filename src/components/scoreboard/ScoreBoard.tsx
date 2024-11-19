@@ -16,7 +16,7 @@ const players = [
 
 export default function ScoreBoard() {
   return (
-    <div className="flex flex-col items-center p-5 w-80 bg-[#003C44] border-4 border-gray-200 rounded-[40px] text-white shadow-lg ml-20 py-10">
+    <div className="flex flex-col items-center p-2 w-80 bg-[#003C44] border-4 border-gray-200 rounded-[15px] text-white shadow-lg ml-8 py-4">
       <motion.span
         className="bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent text-3xl font-bold mb-5"
         initial={{ opacity: 0, y: -20 }}
@@ -27,15 +27,15 @@ export default function ScoreBoard() {
       </motion.span>
 
       <div className="w-full text-center">
-        <div className="flex justify-between py-2 px-4 font-semibold text-[#00C2FF] border-b border-gray-300">
+        <div className="flex justify-between py-0 px-4 font-semibold text-[#00C2FF] border-b border-gray-300">
           <p className="w-1/4">Rank</p>
           <p className="w-1/2">Name</p>
           <p className="w-1/2">Score</p>
         </div>
 
-        {players.map((player) => (
+        {players.map((player, index) => (
           <UnitScore 
-            key={player.rank} 
+            key={index} 
             rank={player.rank} 
             tag={player.name} 
             score={player.score} 

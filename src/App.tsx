@@ -9,7 +9,7 @@ const App: React.FC = () => {
   const [label, setLabel] = useState<string | null>(null)
 
   return (
-    <ModalStartGame label={label} open={modalVisible} start={() => {
+    <ModalStartGame label={label} open={false} start={() => {
       setModalVisible(false)
       setStartGame(true)
     }}>

@@ -352,45 +352,45 @@ export function GameBoard(props: propsGameBoard) {
   
   return (
     <div>
-      <div className="bg-blue-back w-[800px] h-fit border-[12px] border-gray-300 rounded-2xl shadow-lg">
-            <div
-              className="grid"
-              style={{
-                gridTemplateColumns: `repeat(${GRID_WIDTH}, minmax(0, 1fr))`,
-                gridTemplateRows: `repeat(${GRID_HEIGHT}, minmax(0, 1fr))`,
-                width: "100%",
-                maxWidth: "800px",  // Ajusta a largura máxima para dar mais espaço horizontal
-                aspectRatio: `${GRID_WIDTH} / ${GRID_HEIGHT}`, // Mantém a proporção dos elementos
-                padding: 6
-              }}
-            >
-              {Array.from({ length: GRID_WIDTH * GRID_HEIGHT }).map((_, index) => {
-                const x = index % GRID_WIDTH;
-                const y = Math.floor(index / GRID_WIDTH);
-                const isSnake = snake.some(segment => segment.x === x && segment.y === y);
-                const isAiSnake = aiSnake.some(segment => segment.x === x && segment.y === y);
-                const isObstaculos = obstaculos.some(segment => segment.x === x && segment.y === y);
-                const isFood = food.x === x && food.y === y;
-              
-                return (
-                  <div
-                    key={index}
-                    className={`w-full h-full ${
-                      isSnake ? "bg-[#F25227]" : 
-                      isAiSnake ? "bg-[#966CFD]" :
-                      isObstaculos ? "animate-bounce" :
-                      isFood ? "animate-bounce" :
-                      "border-[0.8px] border-blue-bd rounded-md"}`}
-                    style={{
-                      backgroundImage: isFood ? `url(${foodImage})` : isObstaculos ? `url(${bombImage})` : undefined ,
-                      backgroundSize: "cover", // Para garantir que a imagem preencha todo o espaço
-                    }}
-                  ></div>
-                );
-              })}
-          </div>
+      <div className="bg-blue-back w-[800px] h-fit border-[10px] border-gray-300 rounded-2xl shadow-lg">
+        <div
+          className="grid"
+          style={{
+            gridTemplateColumns: `repeat(${GRID_WIDTH}, minmax(0, 1fr))`,
+            gridTemplateRows: `repeat(${GRID_HEIGHT}, minmax(0, 1fr))`,
+            width: "100%",
+            maxWidth: "800px",  // Ajusta a largura máxima para dar mais espaço horizontal
+            aspectRatio: `${GRID_WIDTH} / ${GRID_HEIGHT}`, // Mantém a proporção dos elementos
+            padding: 6
+          }}
+        >
+          {Array.from({ length: GRID_WIDTH * GRID_HEIGHT }).map((_, index) => {
+            const x = index % GRID_WIDTH;
+            const y = Math.floor(index / GRID_WIDTH);
+            const isSnake = snake.some(segment => segment.x === x && segment.y === y);
+            const isAiSnake = aiSnake.some(segment => segment.x === x && segment.y === y);
+            const isObstaculos = obstaculos.some(segment => segment.x === x && segment.y === y);
+            const isFood = food.x === x && food.y === y;
+          
+            return (
+              <div
+                key={index}
+                className={`w-full h-full ${
+                  isSnake ? "bg-[#F25227]" : 
+                  isAiSnake ? "bg-[#966CFD]" :
+                  isObstaculos ? "animate-bounce" :
+                  isFood ? "animate-bounce" :
+                  "border-[0.8px] border-blue-bd rounded-md"}`}
+                style={{
+                  backgroundImage: isFood ? `url(${foodImage})` : isObstaculos ? `url(${bombImage})` : undefined ,
+                  backgroundSize: "cover", // Para garantir que a imagem preencha todo o espaço
+                }}
+              ></div>
+            );
+          })}
+        </div>
       </div>
-      <section className='bg-[#003C44] border-[6px] border-gray-200 rounded-md text-[#00F418] text-center font-jura text-5xl mt-6 p-6'>
+      <section className='bg-[#003C44] border-[4px] border-gray-200 rounded-[10px] text-[#00F418] text-center font-jura text-5xl mt-5 p-6'>
         <motion.span
           className='bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent'
           key={score}
