@@ -1,5 +1,6 @@
 // External Dependencies
 import express, { Application } from "express";
+import cors from "cors";
 import * as dotenv from "dotenv";
 import { connectToDatabase } from "./services/database.service";
 import { leaderboardRouter } from "./routes/leaderboard.routes";
@@ -8,6 +9,7 @@ import { leaderboardRouter } from "./routes/leaderboard.routes";
 dotenv.config();
 
 const app: Application = express();
+app.use(cors({ origin: '*' }));
 const port: number = parseInt(process.env.PORT!);
 
 // Initialize API

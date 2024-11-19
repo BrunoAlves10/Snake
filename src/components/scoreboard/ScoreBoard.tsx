@@ -1,20 +1,27 @@
 import { motion } from "framer-motion";
-import UnitScore from "./unitscore"; 
+import UnitScore from "./UnitScore"; 
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const players = [
-  { rank: 1, name: "BRU", score: "1123124910" },
-  { rank: 2, name: "GJG", score: "110929320" },
-  { rank: 3, name: "ENR", score: "099213012" },
-  { rank: 4, name: "JAO", score: "098301293" },
-  { rank: 5, name: "GST", score: "085123023" },
-  { rank: 6, name: "F90", score: "0821321393" },
-  { rank: 7, name: "STV", score: "0731923921" },
-  { rank: 8, name: "ABC", score: "0721302130" },
-  { rank: 9, name: "7TI", score: "0693120321" },
-  { rank: 10, name: "A10", score: "0631203129" },
-];
+interface Player {
+  name: string
+  score: string
+}
 
 export default function ScoreBoard() {
+  const [players, setPlayers] = useState<Array<Player>>([])
+
+  const getPlayers = () => {
+    axios.get('http://localhost:3000/leaderboard').then((response) => {
+      setPlayers(response.data.payload);
+      console.log(players)
+    })
+  }
+
+  useEffect(() => {
+    getPlayers()
+  }, []);
+
   return (
     <div className="flex flex-col items-center p-2 w-80 bg-[#003C44] border-4 border-gray-200 rounded-[15px] text-white shadow-lg ml-8 py-4">
       <motion.span
@@ -33,10 +40,10 @@ export default function ScoreBoard() {
           <p className="w-1/2">Score</p>
         </div>
 
-        {players.map((player, index) => (
+        {players.map((player: Player, index: number) => (
           <UnitScore 
             key={index} 
-            rank={player.rank} 
+            rank={index+1} 
             tag={player.name} 
             score={player.score} 
           />
