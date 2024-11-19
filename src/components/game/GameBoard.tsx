@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import foodImage from '../../assets/food.png';
 import bombImage from '../../assets/bomb.png';
-import { motion } from 'framer-motion';
+import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
@@ -31,12 +31,7 @@ const initObstaculos = () => {
   return listPositions;
 }
 
-interface propsGameBoard {
-  startGame: boolean,
-  stopGame: (text:string) => void
-}
-
-export function GameBoard(props: propsGameBoard) {
+export function GameBoard() {
   const [snake, setSnake] = useState(initializeSnake(1));
   const [aiSnake, setAiSnake] = useState(initializeSnake(1));
   const [food, setFood] = useState(getRandomPosition());
@@ -47,8 +42,7 @@ export function GameBoard(props: propsGameBoard) {
   const [speed, setSpeed] = useState(160);
   const [gameOver, setGameOver] = useState(true);
   const [score, setScore] = useState(0);
-  const [scoreHistory, setScoreHistory] = useState<number[]>([]); // Histórico de pontos
-  const [animatedScore, setAnimatedScore] = useState(0);
+  const [firstTime, setFirstTime] = useState(true);
 
 
   const snakeRef = useRef(snake);
@@ -56,15 +50,15 @@ export function GameBoard(props: propsGameBoard) {
   const aiSnakeRef = useRef(aiSnake);
   const aiDirectionRef = useRef(aiDirection);
 
-  useEffect(() => {
-    if (props.startGame == true) {
-      setGameOver(false)
-    }
-  },[props.startGame])
+  // useEffect(() => {
+  //   if (props.startGame == true) {
+  //     setGameOver(false)
+  //   }
+  // },[props.startGame])
 
   useEffect(() => {
     snakeRef.current = snake;
-    
+    setScore(score + 1)
   }, [snake]);
 
   useEffect(() => {
@@ -125,17 +119,6 @@ export function GameBoard(props: propsGameBoard) {
     };
   }, []);
 
-  /// teste animacao placar
-
-
-
-
-
-
-
-
-
-
   useEffect(() => {
     if (gameOver) return;
 
@@ -169,50 +152,6 @@ export function GameBoard(props: propsGameBoard) {
       default:
         newHead = head;
     }
-// Esse codigo faz com que a snake possa teletransportar nas bordas do mapa
-    // if (newHead.y >= (GRID_HEIGHT + 1)) {
-    //   if (snake.length > 1) {
-    //     let listSnake = snake;
-    //     listSnake.shift()
-    //     setSnake([{x: snake[0].x, y: 0},...listSnake])        
-    //   } else {
-    //     setSnake([{x: snake[0].x, y: 0}])
-    //   }
-    //   return;
-    // }
-
-    // if (newHead.y <= -1) {
-    //   if (snake.length > 1) {
-    //     let listSnake = snake;
-    //     listSnake.shift()
-    //     setSnake([{x: snake[0].x, y: GRID_HEIGHT},...listSnake])        
-    //   } else {
-    //     setSnake([{x: snake[0].x, y: GRID_HEIGHT}])
-    //   }
-    //   return;
-    // }
-    
-    // if (newHead.x >= (GRID_WIDTH + 1)) {
-    //   if (snake.length > 1) {
-    //     let listSnake = snake;
-    //     listSnake.shift()
-    //     setSnake([{x: 0, y: snake[0].y},...listSnake])        
-    //   } else {
-    //     setSnake([{x: 0, y: snake[0].y}])
-    //   }
-    //   return;
-    // }
-
-    // if (newHead.x <= -1) {
-    //   if (snake.length > 1) {
-    //     let listSnake = snake;
-    //     listSnake.shift()
-    //     setSnake([{x: GRID_WIDTH, y: snake[0].y},...listSnake])        
-    //   } else {
-    //     setSnake([{x: GRID_WIDTH, y: snake[0].y}])
-    //   }
-    //   return;
-    // }
 
     // Verifica colisão com paredes
     if (
@@ -222,16 +161,12 @@ export function GameBoard(props: propsGameBoard) {
       newHead.y >= GRID_HEIGHT
     ) {
       setGameOver(true);
-      restartGame()
-      props.stopGame('Você perdeu o jogo!')
       return;
     }
 
     // Verifica colisão com o próprio corpo
     if (newSnake.some((segment) => segment.x === newHead.x && segment.y === newHead.y)) {
       setGameOver(true);
-      restartGame()
-      props.stopGame('Você perdeu o jogo!')
       return;
     }
 
@@ -240,8 +175,6 @@ export function GameBoard(props: propsGameBoard) {
     // Verifica colisão entre as cobras
     if (newSnake.some(segment => aiSnakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
       setGameOver(true);
-      restartGame()
-      props.stopGame('Você perdeu o jogo!')
       return;
     }
 
@@ -249,8 +182,6 @@ export function GameBoard(props: propsGameBoard) {
     if (obstaculos.some(segment => (segment.x === newHead.x && segment.y === newHead.y))) {
       if ((score - 1000) < 0) {
         setGameOver(true);
-        restartGame()
-        props.stopGame('Você perdeu o jogo!')
         return;
       } else {
         setScore(score - 1000)
@@ -359,11 +290,38 @@ export function GameBoard(props: propsGameBoard) {
     setNextDirection(null);
     setScore(0)
     setSpeed(200);
+    setGameOver(false)
+    setFirstTime(false)
   };
+
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, Math.round);
+
+  useEffect(() => {
+    animate(count, score, {
+      duration: 2
+    });
+  }, [score]);
   
   return (
     <div>
-      <div className="bg-blue-back w-[800px] h-fit border-[12px] border-gray-300 rounded-2xl shadow-lg">
+      <div className="bg-blue-back w-[800px] h-fit border-[8px] border-gray-300 rounded-2xl shadow-lg relative">
+        {
+          gameOver
+          ? (
+            <div className='z-50 bg-opacity-40 bg-black flex flex-col justify-center items-center p-10 absolute right-0 left-0 top-0 bottom-0 rounded-[8px]'>
+              <h1 className='font-bold text-2xl text-white'>
+                {
+                  firstTime ? "Bem-vindo ao SSSNAKE" : "Você perdeu o jogo!"
+                }
+              </h1>
+              <button
+                className="bg-yellow-300 px-8 py-2 rounded-md font-semibold mt-6"
+                onClick={restartGame}
+              >{firstTime ? "Começar a jogar" : "Jogar novamente"}</button>
+            </div>
+          ) : null
+        }
             <div
               className="grid"
               style={{
@@ -400,18 +358,15 @@ export function GameBoard(props: propsGameBoard) {
                 );
               })}
           </div>
+            
       </div>
-      <section className='bg-[#003C44] border-[6px] border-gray-200 rounded-md text-[#00F418] text-center font-jura text-5xl mt-6 p-6'>
-        <motion.span
+      <section className='grid grid-flow-col justify-center gap-4 bg-[#003C44] border-[4px] border-gray-300 rounded-xl text-[#00F418] text-center font-jura text-5xl mt-6 p-6'>
+        <motion.h1
           className='bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent'
-          key={score}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
         >
-          {score} Pontos
-        </motion.span>
+          {rounded}
+        </motion.h1>
+        <h1>Pontos</h1>
       </section>
     </div>
   )
