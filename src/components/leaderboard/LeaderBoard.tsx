@@ -1,31 +1,17 @@
 import { motion } from "framer-motion";
 import UnitScore from "./UnitScore"; 
-import { useEffect, useState } from "react";
-import axios from "axios";
 
 interface Player {
   name: string
-  score: string
+  score: number
 }
 
-export default function LeaderBoard() {
-  const [players, setPlayers] = useState<Array<Player>>([])
+interface PropsLeaderBoard {
+  players: Array<Player>
+}
 
-  const getPlayers = () => {
-    try{
-      axios.get('http://localhost:3000/leaderboard').then((response) => {
-        setPlayers(response.data.payload);
-        console.log(players)
-      })
-    } catch (e) {
-      console.log("Erro ao consultar Leaderboard. Erro: ", e)
-    }
-  }
+export default function LeaderBoard(props: PropsLeaderBoard) {
 
-  useEffect(() => {
-    getPlayers()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div className="flex flex-col items-center p-2 w-80 bg-[#003C44] border-4 border-gray-300 rounded-[15px] text-white shadow-lg ml-8 py-4">
@@ -45,7 +31,7 @@ export default function LeaderBoard() {
           <p className="w-1/2">Score</p>
         </div>
 
-        {players.map((player: Player, index: number) => (
+        {props.players.map((player: Player, index: number) => (
           <UnitScore 
             key={index} 
             rank={index+1} 

@@ -1,7 +1,7 @@
 interface PropsUnitScore {
   rank: number;
   tag: string;  // Agora usamos tag para exibir o nome
-  score: string;
+  score: number;
 }
 
 export default function UnitScore({ rank, tag, score }: PropsUnitScore) {
