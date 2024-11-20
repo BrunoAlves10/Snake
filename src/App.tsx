@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import ModalStartGame from "./components/modal/modal.startgame";
+import React from "react";
 import { GameBoard } from "./components/game/GameBoard";
 import { NavBar } from "./components/nav/NavBar";
-import ScoreBoard from "./components/scoreboard/ScoreBoard";
+import LeaderBoard from "./components/leaderboard/LeaderBoard";
 
 const App: React.FC = () => {
   return (
@@ -11,7 +10,7 @@ const App: React.FC = () => {
           <NavBar/>
           <div className="flex flex-row">
             <GameBoard/>
-            <ScoreBoard/>
+            <LeaderBoard/>
           </div>
         </div>
       </div>

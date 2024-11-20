@@ -8,18 +8,23 @@ interface Player {
   score: string
 }
 
-export default function ScoreBoard() {
+export default function LeaderBoard() {
   const [players, setPlayers] = useState<Array<Player>>([])
 
   const getPlayers = () => {
-    axios.get('http://localhost:3000/leaderboard').then((response) => {
-      setPlayers(response.data.payload);
-      console.log(players)
-    })
+    try{
+      axios.get('http://localhost:3000/leaderboard').then((response) => {
+        setPlayers(response.data.payload);
+        console.log(players)
+      })
+    } catch (e) {
+      console.log("Erro ao consultar Leaderboard. Erro: ", e)
+    }
   }
 
   useEffect(() => {
     getPlayers()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
