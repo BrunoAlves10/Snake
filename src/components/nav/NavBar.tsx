@@ -23,8 +23,10 @@ export function NavBar() {
         {
           selected.map((item) => {
             return (
-              <NavLink to={item.path} style={({isActive}) => {
-                return {
+              <NavLink to={item.path} 
+              end
+              style={({isActive}) => {
+                return {  
                   paddingLeft: 12,
                   paddingRight: 12,
                   paddingTop: 3,
