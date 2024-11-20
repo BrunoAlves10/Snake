@@ -295,7 +295,7 @@ export function GameBoard(props: PropsGameBoard) {
     console.log(highScoreName.length)
     console.log(highScoreName)
     console.log(newHighScore)
-    if (!newHighScore && highScoreName.length === 3 && highScoreName != "   "){
+    if (!newHighScore && highScoreName != "   "){
       props.highScore(score, highScoreName)
     }
     setSnake(initializeSnake(1));
@@ -360,9 +360,8 @@ export function GameBoard(props: PropsGameBoard) {
                       maskChar=" "
                       alwaysShowMask={true}
                       style={inputStyle}
-                      onChange={(value: any) => {
-                        console.log(value.target.value)
-
+                      onChange={(name: any) => {
+                        sethighScoreName(name.target.value)
                       }}
                     />
                   </div>

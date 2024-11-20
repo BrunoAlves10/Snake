@@ -26,6 +26,9 @@ const App: React.FC = () => {
   }
 
   const highScore = (score: number, name: string) => {
+    console.log('--------------------')
+    console.log(name)
+    console.log(score)
     try{
       axios.post('http://localhost:3000/leaderboard/highscore', {name, score}).then((response) => {
         console.log(response)
