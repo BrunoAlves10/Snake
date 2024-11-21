@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
 import foodImage from '../../assets/food.png';
@@ -292,12 +293,10 @@ export function GameBoard(props: PropsGameBoard) {
   };
 
   const restartGame = () => {
-    console.log(highScoreName.length)
-    console.log(highScoreName)
-    console.log(newHighScore)
-    if (!newHighScore && highScoreName != "   "){
+    if (newHighScore && highScoreName.length === 3 && highScoreName != "   "){
       props.highScore(score, highScoreName)
     }
+    setNewHighScore(false)
     setSnake(initializeSnake(1));
     setAiSnake(initializeSnake(1));
     setFood(getRandomPosition());
@@ -320,7 +319,7 @@ export function GameBoard(props: PropsGameBoard) {
   }, [score]);
 
   const inputStyle = {
-    fontFamily: 'Arcade, sans-serif', // Você pode escolher uma fonte pixelada para dar o visual de fliperama.
+    fontFamily: 'Arcade, sans-serif',
     fontSize: '1.5rem',
     letterSpacing: '0.5rem',
     textAlign: 'center',
@@ -330,9 +329,11 @@ export function GameBoard(props: PropsGameBoard) {
     width: '90px',
   };
 
-  if (score > props.lastRankScore){
-    setNewHighScore(true)
-  }
+  useEffect(() => {
+    if (score > props.lastRankScore) {
+      setNewHighScore(true);
+    }
+  }, [score, props.lastRankScore]);
   
   return (
     <div>
@@ -347,7 +348,7 @@ export function GameBoard(props: PropsGameBoard) {
                 }
               </h1>
               {
-                !newHighScore ? <div>
+                newHighScore ? <div>
                   <h3 className='font-bold text-3xl text-white pt-3'>
                     Seu Score entrou para o LeaderBoard!
                   </h3>

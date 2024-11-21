@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { GameBoard } from "./components/game/GameBoard";
@@ -26,13 +26,11 @@ const App: React.FC = () => {
   }
 
   const highScore = (score: number, name: string) => {
-    console.log('--------------------')
-    console.log(name)
-    console.log(score)
     try{
-      axios.post('http://localhost:3000/leaderboard/highscore', {name, score}).then((response) => {
-        console.log(response)
-
+      name = name.toUpperCase()
+      axios.post('http://localhost:3000/leaderboard/highscore', {name, score}).then((res) => {
+        console.log('RES:')
+        console.log(res)
       })
     } catch (e) {
       console.log("Erro ao cadastrar novo HighScore. Erro: ", e)
