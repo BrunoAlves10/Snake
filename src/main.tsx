@@ -20,7 +20,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/creditos",
-    element: <Tutorial/>
+    element: <Creditos/>
   },
 ]);
 

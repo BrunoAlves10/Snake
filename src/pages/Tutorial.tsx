@@ -5,7 +5,7 @@ export function Tutorial() {
     <div className="bg-gradient flex items-center justify-center w-screen h-screen overflow-hidden">
       <div className="flex flex-col items-center justify-center">
         <NavBar/>
-        <div className="w-[1100px] h-[500px] bg-slate-300 rounded-2xl p-6 overflow-y-auto text-black">
+        <div className="w-[1150px] h-[540px] bg-slate-300 rounded-2xl p-6 overflow-y-auto text-black">
           <h1 className="text-2xl font-bold mb-4">Tutorial de Snake</h1>
           
           <section className="mb-4">
@@ -17,19 +17,19 @@ export function Tutorial() {
           <section className="mb-4">
             <h2 className="text-xl font-semibold mb-2">🕹️ Controles</h2>
             <ul className="list-disc pl-5">
-              <li>⬆️ Seta para Cima: Mover para cima</li>
-              <li>⬇️ Seta para Baixo: Mover para baixo</li>
-              <li>⬅️ Seta para Esquerda: Mover para esquerda</li>
-              <li>➡️ Seta para Direita: Mover para direita</li>
+              <li>⬆️ Seta para Cima ou W: Mover para cima</li>
+              <li>⬇️ Seta para Baixo ou S: Mover para baixo</li>
+              <li>⬅️ Seta para Esquerda ou A: Mover para esquerda</li>
+              <li>➡️ Seta para Direita ou D: Mover para direita</li>
             </ul>
           </section>
           
           <section className="mb-4">
             <h2 className="text-xl font-semibold mb-2">🍎 Regras</h2>
             <ul className="list-disc pl-5">
-              <li>Cada vez que a cobra come uma maçã, ela cresce</li>
+              <li>Cada vez que a cobra come uma maçã, ela cresce e ganha 1.000 pontos</li>
               <li>O jogo termina se a cobra bater na parede ou em si mesma</li>
-              <li>Quanto maior a cobra, mais pontos você ganha</li>
+              <li>Quanto mais tempo você ficar vivo, mais pontos você ganha</li>
             </ul>
           </section>
           
