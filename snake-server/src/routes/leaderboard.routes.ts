@@ -133,9 +133,6 @@ leaderboardRouter.post("/highscore", async (req: Request, res: Response) => {
       .toArray()) as unknown as Highscore[];
 
     if (highscore.length != 0 && highscore[0].score < req.body.score) {
-      console.log(highscore[0]._id)
-      console.log(highscore)
-
       const highscoreUpdated = {
         _id: highscore[0]._id,
         name: highscore[0].name,
@@ -148,25 +145,17 @@ leaderboardRouter.post("/highscore", async (req: Request, res: Response) => {
       });
   
       if (result) {
-        console.log('funcionou')
         cResponse.status = "SUCCESS";
         cResponse.message = `Successfully updated highscore with id ${highscore[0]._id}`;
         cResponse.payload = highscoreUpdated;
   
         res.status(201).send(cResponse);
       } else {
-        console.log('n funciono')
         cResponse.status = "ERROR";
         cResponse.message = `Highscore with id ${highscore[0]._id} not updated`;
   
         res.status(304).send(cResponse);
       }
-
-      // cResponse.status = "ERROR";
-      // cResponse.message = "Name already used in Leaderboard from MongoDB";
-      // cResponse.payload = highscore;
-
-      // res.status(409).send(cResponse);
     } else {
       req.body.createdAt = new Date();
 
