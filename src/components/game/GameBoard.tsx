@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
 import foodImage from '../../assets/food.png';
 import bombImage from '../../assets/bomb.png';
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
+import InputMask from 'react-input-mask';
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
@@ -23,7 +26,7 @@ const initializeSnake = (length: number) => {
 
 const initObstaculos = () => {
   const randomValue = Math.random() * (10 - 1) + 1;
-  let listPositions = []
+  const listPositions = []
   for (let index = 0; index < randomValue; index++) {
     listPositions.push(getRandomPosition())
   }
@@ -31,7 +34,13 @@ const initObstaculos = () => {
   return listPositions;
 }
 
-export function GameBoard() {
+
+interface PropsGameBoard {
+  lastRankScore: number,
+  highScore: (score: number, name: string) => void
+}
+
+export function GameBoard(props: PropsGameBoard) {
   const [snake, setSnake] = useState(initializeSnake(1));
   const [aiSnake, setAiSnake] = useState(initializeSnake(1));
   const [food, setFood] = useState(getRandomPosition());
@@ -43,6 +52,8 @@ export function GameBoard() {
   const [gameOver, setGameOver] = useState(true);
   const [score, setScore] = useState(0);
   const [firstTime, setFirstTime] = useState(true);
+  const [newHighScore, setNewHighScore] = useState<boolean>(false);
+  const [highScoreName, sethighScoreName] = useState<string>('')
 
 
   const snakeRef = useRef(snake);
@@ -282,6 +293,10 @@ export function GameBoard() {
   };
 
   const restartGame = () => {
+    if (newHighScore && highScoreName.length === 3 && highScoreName != "   "){
+      props.highScore(score, highScoreName)
+    }
+    setNewHighScore(false)
     setSnake(initializeSnake(1));
     setAiSnake(initializeSnake(1));
     setFood(getRandomPosition());
@@ -302,6 +317,23 @@ export function GameBoard() {
       duration: 2
     });
   }, [score]);
+
+  const inputStyle = {
+    fontFamily: 'Arcade, sans-serif',
+    fontSize: '1.5rem',
+    letterSpacing: '0.5rem',
+    textAlign: 'center',
+    backgroundColor: '#FFFF',
+    color: '#000',
+    borderRadius: '8px',
+    width: '90px',
+  };
+
+  useEffect(() => {
+    if (score > props.lastRankScore) {
+      setNewHighScore(true);
+    }
+  }, [score, props.lastRankScore]);
   
   return (
     <div>
@@ -310,11 +342,32 @@ export function GameBoard() {
           gameOver
           ? (
             <div className='z-50 bg-opacity-40 bg-black flex flex-col justify-center items-center p-10 absolute right-0 left-0 top-0 bottom-0 rounded-[8px]'>
-              <h1 className='font-bold text-2xl text-white'>
+              <h1 className='font-bold text-4xl text-white'>
                 {
                   firstTime ? "Bem-vindo ao SSSNAKE" : "Você perdeu o jogo!"
                 }
               </h1>
+              {
+                newHighScore ? <div>
+                  <h3 className='font-bold text-3xl text-white pt-3'>
+                    Seu Score entrou para o LeaderBoard!
+                  </h3>
+                  <div className='flex items-center justify-center pt-3'>
+                    <p className='font-bold text-2xl text-white pr-3'>
+                      Adicione um nome:
+                    </p>
+                    <InputMask
+                      mask="***"
+                      maskChar=" "
+                      alwaysShowMask={true}
+                      style={inputStyle}
+                      onChange={(name: any) => {
+                        sethighScoreName(name.target.value)
+                      }}
+                    />
+                  </div>
+                </div> : ""
+              }
               <button
                 className="bg-yellow-300 px-8 py-2 rounded-md font-semibold mt-6"
                 onClick={restartGame}
