@@ -7,6 +7,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { Tutorial } from "./pages/Tutorial.tsx";
+import { Creditos } from "./pages/Creditos.tsx";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +17,11 @@ const router = createBrowserRouter([
   {
     path: "/tutorial",
     element: <Tutorial/>
-  }
+  },
+  {
+    path: "/creditos",
+    element: <Creditos/>
+  },
 ]);
 
 createRoot(document.getElementById("root")!).render(
