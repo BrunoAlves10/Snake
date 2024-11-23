@@ -131,30 +131,36 @@ leaderboardRouter.post("/highscore", async (req: Request, res: Response) => {
     const highscore = (await collections
       .leaderboard!.find(query)
       .toArray()) as unknown as Highscore[];
-
-    if (highscore.length != 0 && highscore[0].score < req.body.score) {
-      const highscoreUpdated = {
+    if (highscore.length != 0) {
+      if (highscore[0].score < req.body.score){
+        const highscoreUpdated = {
         _id: highscore[0]._id,
         name: highscore[0].name,
         score: req.body.score,
         createdAt: highscore[0].createdAt
-      }
-      // Update user record
-      const result = await collections.leaderboard!.updateOne({ _id: highscore[0]._id }, {
-        $set: highscoreUpdated,
-      });
-  
-      if (result) {
-        cResponse.status = "SUCCESS";
-        cResponse.message = `Successfully updated highscore with id ${highscore[0]._id}`;
-        cResponse.payload = highscoreUpdated;
-  
-        res.status(201).send(cResponse);
+        }
+        // Update user record
+        const result = await collections.leaderboard!.updateOne({ _id: highscore[0]._id }, {
+          $set: highscoreUpdated,
+        });
+    
+        if (result) {
+          cResponse.status = "SUCCESS";
+          cResponse.message = `Successfully updated highscore with id ${highscore[0]._id}`;
+          cResponse.payload = highscoreUpdated;
+    
+          res.status(201).send(cResponse);
+        } else {
+          cResponse.status = "ERROR";
+          cResponse.message = `Highscore with id ${highscore[0]._id} not updated`;
+    
+          res.status(304).send(cResponse);
+        }
       } else {
         cResponse.status = "ERROR";
-        cResponse.message = `Highscore with id ${highscore[0]._id} not updated`;
-  
-        res.status(304).send(cResponse);
+        cResponse.message = "Failed to update the highscore. Lower score than the existing one";
+
+        res.status(409).send(cResponse);
       }
     } else {
       req.body.createdAt = new Date();
