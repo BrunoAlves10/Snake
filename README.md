@@ -1,50 +1,35 @@
-# React + TypeScript + Vite
+# SSSnake - Game made with: TypeScript, Tailwind
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este é um jogo baseado em **Snake** desenvolvido com **TypeScript**, **Tailwind CSS**. O objetivo do jogo é sobreviver o máximo possível enquanto coleta comidas espalhadas pelo mapa para aumentar a pontuação e alcançar o maior rank no **Leaderboard**.
 
-Currently, two official plugins are available:
+## Sobre o Jogo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+O jogo possui duas cobras:
+1. **Cobra controlada pelo usuário**: A cobra que você controla com as teclas de direção (cima, baixo, esquerda, direita).
+2. **Cobra controlada pela IA**: A IA tentará competir com você, tentando se alimentar e sobreviver.
 
-## Expanding the ESLint configuration
+O objetivo é pegar o máximo de comida e aumentar a pontuação para alcançar o topo do **Leaderboard**. A cada comida que você pega, sua cobra cresce e a pontuação aumenta.
+Enquanto isso você deve batalhar ou fugir da cobra rival, equanto desvia de diversos obstaculos presentes no mapa.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Regras do Jogo
+- Sobreviva o maior tempo possível.
+- Colete comida para aumentar sua pontuação.
+- Fique atento à cobra rival, pois ela também está tentando sobreviver.
+- O jogo é finalizado quando você colide com o corpo da sua cobra no seu rival ou com as paredes.
 
-- Configure the top-level `parserOptions` property like this:
+## Tecnologias Usadas
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **TypeScript**: Para garantir a tipagem estática e maior segurança no desenvolvimento.
+- **Tailwind CSS**: Utilizado para a estilização do jogo de forma rápida e eficiente.
+- **Vite**: Ferramenta de bundling que permite um desenvolvimento rápido e otimizado.
+- **Framer Motion**: Biblioteca usada para animações fluídas dentro do jogo, incluindo animação da pontuação.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Setup do Projeto
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/BrunoAlves10/Snake.git
+   cd local_da_pasta
+   npm install
+   npm run dev
+  
