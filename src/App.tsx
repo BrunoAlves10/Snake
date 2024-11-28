@@ -32,6 +32,7 @@ const App: React.FC = () => {
       axios.post('http://localhost:3000/leaderboard/highscore', {name, score}).then((res) => {
         console.log('RES:')
         console.log(res)
+        getPlayers()
       })
     } catch (e) {
       console.log("Erro ao cadastrar novo HighScore. Erro: ", e)
