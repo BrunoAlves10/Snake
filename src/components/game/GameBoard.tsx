@@ -279,6 +279,9 @@ export function GameBoard(props: PropsGameBoard) {
 
     // Verifica se a cobra IA comeu o alimento
     if (newAiHead.x === food.position.x && newAiHead.y === food.position.y) {
+      if (food.type == "gold") {
+        contadorMacas++;
+      }
       setFood(getRandomPosition()); // Move a maçã para uma nova posição aleatória
       //contadorMacas++;
     } else { 
