@@ -29,7 +29,10 @@ Enquanto isso você deve batalhar ou fugir da cobra rival, equanto desvia de div
 1. Clone o repositório:
    ```bash
    git clone https://github.com/BrunoAlves10/Snake.git
-   cd local_da_pasta
+   cd Snake
    npm install
-   npm run dev
+   cd snake-server
+   npm install
+   cd ../
+   npm start
   
