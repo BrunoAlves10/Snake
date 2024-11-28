@@ -41,7 +41,7 @@ const App: React.FC = () => {
   useEffect(() => {
     getPlayers()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [players]);
+  }, []);
 
   if (loaded){
     return (

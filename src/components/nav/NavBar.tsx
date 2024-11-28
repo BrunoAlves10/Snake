@@ -23,7 +23,7 @@ export function NavBar() {
         {
           selected.map((item) => {
             return (
-              <NavLink to={item.path} 
+              <NavLink key={item.title} to={item.path} 
               end
               style={({isActive}) => {
                 return {  
