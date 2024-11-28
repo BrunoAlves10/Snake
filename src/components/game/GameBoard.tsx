@@ -11,17 +11,32 @@ type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
 const GRID_WIDTH = 40; // Largura do grid (20 colunas)
 const GRID_HEIGHT = 20; // Altura do grid (20 linhas)
+let contadorMacas = 1;
 
-const getRandomPosition = () => ({
-  x: Math.floor(Math.random() * GRID_WIDTH),
-  y: Math.floor(Math.random() * GRID_HEIGHT)
-});
+
+function getRandomPosition() {
+  return (
+    {
+    "type": (contadorMacas > 1) ? (contadorMacas % 5 === 0) ? "gold" : "red" : "red",
+    "position": {
+      x: Math.floor(Math.random() * GRID_WIDTH),
+      y: Math.floor(Math.random() * GRID_HEIGHT)
+      }
+    }
+  )
+}
+
+const getRandomPositionObstaculo = () => (
+  {
+    x: Math.floor(Math.random() * GRID_WIDTH),
+    y: Math.floor(Math.random() * GRID_HEIGHT)
+  });
 
 const initializeSnake = (length: number) => {
-  const position = getRandomPosition();
+  const rdp = getRandomPositionObstaculo();
   return Array.from({ length }, (_, i) => ({
-    x: position.x - i,
-    y: position.y
+    x: rdp.x - i,
+    y: rdp.y
   }));
 };
 
@@ -29,7 +44,7 @@ const initObstaculos = () => {
   const randomValue = Math.random() * (10 - 1) + 1;
   const listPositions = []
   for (let index = 0; index < randomValue; index++) {
-    listPositions.push(getRandomPosition())
+    listPositions.push(getRandomPositionObstaculo())
   }
 
   return listPositions;
@@ -45,7 +60,6 @@ export function GameBoard(props: PropsGameBoard) {
   const [snake, setSnake] = useState(initializeSnake(1));
   const [aiSnake, setAiSnake] = useState(initializeSnake(1));
   const [food, setFood] = useState(getRandomPosition());
-  const [food2, setFood2] = useState(getRandomPosition());
   const [obstaculos, setObstaculos] = useState(initObstaculos())
   const [direction, setDirection] = useState<Direction>("RIGHT");
   const [aiDirection, setAiDirection] = useState<Direction>("LEFT");
@@ -56,7 +70,6 @@ export function GameBoard(props: PropsGameBoard) {
   const [firstTime, setFirstTime] = useState(true);
   const [newHighScore, setNewHighScore] = useState<boolean>(false);
   const [highScoreName, sethighScoreName] = useState<string>('')
-
 
   const snakeRef = useRef(snake);
   const directionRef = useRef(direction);
@@ -204,14 +217,15 @@ export function GameBoard(props: PropsGameBoard) {
     }
 
     // Verifica se a cobra comeu o alimento
-    if (newHead.x === food.x && newHead.y === food.y) {
+    if (newHead.x === food.position.x && newHead.y === food.position.y) {
+      contadorMacas++;
       setFood(getRandomPosition()); // Move a maçã para uma nova posição aleatória
-      setScore(score => score + 1000); // Incrementa o placar
-    } else if (newHead.x === food2.x && newHead.y === food2.y) {
-      setFood2(getRandomPosition());
-      setScore(score => score + 5000);
-    }
-    else {
+      if (food.type == "red") {
+        setScore(score + 1000); // Incrementa o placar
+      } else {
+        setScore(score + 2000)
+      }
+    } else {
       newSnake.pop();
     }
 
@@ -235,8 +249,8 @@ export function GameBoard(props: PropsGameBoard) {
     if (possibleDirections.length > 0) {
       newAiDirection = possibleDirections.reduce((bestDirection: any, dir: any) => {
         const testHead = getNewHead(aiHead, dir);
-        const distanceToFood = Math.abs(testHead.x - food.x) + Math.abs(testHead.y - food.y);
-        const bestDistance = Math.abs(getNewHead(aiHead, bestDirection).x - food.x) + Math.abs(getNewHead(aiHead, bestDirection).y - food.y);
+        const distanceToFood = Math.abs(testHead.x - food.position.x) + Math.abs(testHead.y - food.position.y);
+        const bestDistance = Math.abs(getNewHead(aiHead, bestDirection).x - food.position.x) + Math.abs(getNewHead(aiHead, bestDirection).y - food.position.y);
         return distanceToFood < bestDistance ? dir : bestDirection;
       }, possibleDirections[0]);
     }
@@ -264,20 +278,15 @@ export function GameBoard(props: PropsGameBoard) {
     newAiSnake.unshift(newAiHead);
 
     // Verifica se a cobra IA comeu o alimento
-    if (newAiHead.x === food.x && newAiHead.y === food.y) {
+    if (newAiHead.x === food.position.x && newAiHead.y === food.position.y) {
       setFood(getRandomPosition()); // Move a maçã para uma nova posição aleatória
-    } else if (newAiHead.x === food2.x && newAiHead.y === food2.y) {
-      setFood2(getRandomPosition());
-    }
-    else { 
+      //contadorMacas++;
+    } else { 
       newAiSnake.pop();
     }
 
     // Verifica colisão entre as cobras
     if (newAiSnake.some(segment => snakeRef.current.some(s => s.x === segment.x && s.y === segment.y))) {
-      //setGameOver(true);
-      //restartGame()
-      //props.stopGame('Você ganhou o jogo!')
       setAiSnake(initializeSnake(1))
       return;
     }
@@ -309,7 +318,6 @@ export function GameBoard(props: PropsGameBoard) {
     setSnake(initializeSnake(1));
     setAiSnake(initializeSnake(1));
     setFood(getRandomPosition());
-    setFood2(getRandomPosition());
     setDirection("RIGHT");
     setAiDirection("LEFT");
     setNextDirection(null);
@@ -317,6 +325,7 @@ export function GameBoard(props: PropsGameBoard) {
     setSpeed(200);
     setGameOver(false)
     setFirstTime(false)
+    contadorMacas = 0;
   };
 
   const count = useMotionValue(0);
@@ -324,11 +333,11 @@ export function GameBoard(props: PropsGameBoard) {
 
   useEffect(() => {
     animate(count, score, {
-      duration: 2
+      duration: 1
     });
   }, [score]);
 
-  const inputStyle = {
+  const inputStyle: React.CSSProperties = {
     fontFamily: 'Arcade, sans-serif',
     fontSize: '1.5rem',
     letterSpacing: '0.5rem',
@@ -402,8 +411,7 @@ export function GameBoard(props: PropsGameBoard) {
                 const isSnake = snake.some(segment => segment.x === x && segment.y === y);
                 const isAiSnake = aiSnake.some(segment => segment.x === x && segment.y === y);
                 const isObstaculos = obstaculos.some(segment => segment.x === x && segment.y === y);
-                const isFood = food.x === x && food.y === y;
-                const isFood2 = food2.x === x && food2.y === y;
+                const isFood = food.position.x === x && food.position.y === y;
               
                 return (
                   <div
@@ -413,10 +421,9 @@ export function GameBoard(props: PropsGameBoard) {
                       isAiSnake ? "bg-[#966CFD]" :
                       isObstaculos ? "animate-bounce" :
                       isFood ? "animate-bounce" :
-                      isFood2 ? "animate-bounce" :
                       "border-[0.8px] border-blue-bd rounded-md"}`}
                     style={{
-                      backgroundImage: isFood ? `url(${foodImage})` : isFood2 ? `url(${food2Image})` : isObstaculos ? `url(${bombImage})` : undefined , 
+                      backgroundImage: isFood ? food.type == "red" ? `url(${foodImage})` : `url(${food2Image})` : isObstaculos ? `url(${bombImage})` : undefined , 
                       backgroundSize: "cover", //Para garantir que a imagem preencha todo o espaço
                     }}
                   ></div>
