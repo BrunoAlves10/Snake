@@ -1,30 +1,52 @@
+import { AnimatedEmoji } from "../components/animated/AnimateEmoji";
 import { NavBar } from "../components/nav/NavBar";
+import { motion } from "framer-motion";
 
 export function Creditos() {
   return (
     <div className="bg-gradient flex items-center justify-center w-screen h-screen overflow-hidden">
       <div className="flex flex-col items-center justify-center">
         <NavBar />
-        <div className="w-[1150px] h-[540px] bg-slate-300 rounded-2xl p-6 overflow-y-auto text-black">
-          <h1 className="text-2xl font-bold mb-4">Créditos</h1>
-          
+        <div className="flex flex-col items-center justify-center">
+          <motion.h1
+            className="bg-gradient-to-r from-[#00C2FF] to-[#00F418] bg-clip-text text-transparent text-4xl font-bold mb-5"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            Créditos
+          </motion.h1>
+        </div>
+        <div className="no-scrollbar w-[1150px] h-[540px] bg-[#003C44] rounded-2xl p-6 overflow-y-auto scrollbar-hide text-white border-4 border-gray-300">
           <section className="mb-4">
-            <h2 className="text-xl font-semibold mb-2">🎨 Design</h2>
-            <p>Desenvolvido por Guilherme Ferreira Jorge</p>
-            <p>Desenvolvido por João Paulo Toledo de Almeida Arrigo</p>
-            <p>Desenvolvido por Gustavo de Campos Soares</p>
-            <p>Desenvolvido por Bruno Fontolan Alves</p>
-            <p>Desenvolvido por Enrico Ribeiro Farina</p>
+            <h2 className="text-2xl font-semibold mb-2">
+              <AnimatedEmoji>🎨</AnimatedEmoji> Design
+            </h2>
+            <ul className="list-disc pl-5 text-lg">
+              <li>Desenvolvido por Guilherme Ferreira Jorge</li>
+              <li>Desenvolvido por João Paulo Toledo de Almeida Arrigo</li>
+              <li>Desenvolvido por Gustavo de Campos Soares</li>
+              <li>Desenvolvido por Bruno Fontolan Alves</li>
+              <li>Desenvolvido por Enrico Ribeiro Farina</li>
+            </ul>
           </section>
           
           <section className="mb-4">
-            <h2 className="text-xl font-semibold mb-2">💻 Desenvolvimento</h2>
-            <p>Código escrito com muito cuidado e paixão.</p>
+            <h2 className="text-2xl font-semibold mb-2">
+              <AnimatedEmoji>💻</AnimatedEmoji> Desenvolvimento
+            </h2>
+            <p className="text-lg">
+              Código escrito com muito cuidado e paixão.
+            </p>
           </section>
           
           <section>
-            <h2 className="text-xl font-semibold mb-2">❤️ Agradecimentos</h2>
-            <p>Agradecemos a todos os jogadores que tornam este jogo especial.</p>
+            <h2 className="text-2xl font-semibold mb-2">
+              <AnimatedEmoji>❤️</AnimatedEmoji> Agradecimentos
+            </h2>
+            <p className="text-lg">
+              Agradecemos a todos os jogadores que tornam este jogo especial.
+            </p>
           </section>
         </div>
       </div>
