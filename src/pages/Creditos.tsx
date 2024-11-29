@@ -1,19 +1,6 @@
+import { AnimatedEmoji } from "../components/animated/AnimateEmoji";
 import { NavBar } from "../components/nav/NavBar";
 import { motion } from "framer-motion";
-
-// Componente para Emoji Animado com Bounce Simples (Pulo Único)
-const AnimatedEmoji = ({ children }) => {
-  return (
-    <motion.span
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 200, damping: 20 }}
-      className="inline-block"
-    >
-      {children}
-    </motion.span>
-  );
-};
 
 export function Creditos() {
   return (
@@ -30,7 +17,7 @@ export function Creditos() {
             Créditos
           </motion.h1>
         </div>
-        <div className="w-[1150px] h-[540px] bg-[#003C44] rounded-2xl p-6 overflow-y-auto scrollbar-hide text-white border-4 border-gray-300">
+        <div className="no-scrollbar w-[1150px] h-[540px] bg-[#003C44] rounded-2xl p-6 overflow-y-auto scrollbar-hide text-white border-4 border-gray-300">
           <section className="mb-4">
             <h2 className="text-2xl font-semibold mb-2">
               <AnimatedEmoji>🎨</AnimatedEmoji> Design
